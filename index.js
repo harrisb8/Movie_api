@@ -21,7 +21,8 @@ const { check, validationResult } = require('express-validator');
  /* mongoose.connect( process.env.CONNECTION_URI, 
   { useNewUrlParser: true, useUnifiedTopology: true }); */
 
-    
+   // Adding new comments
+
 
      
     app.use('/documentation.html', express.static('public'));
