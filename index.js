@@ -22,8 +22,6 @@ const { check, validationResult } = require('express-validator');
   { useNewUrlParser: true, useUnifiedTopology: true }); */
 
    // Adding new comments
-
-
      
     app.use('/documentation.html', express.static('public'));
 
@@ -34,6 +32,14 @@ const { check, validationResult } = require('express-validator');
     app.use(bodyParser.urlencoded({ extended: true }));
 
     //------Added Cross Origin Resource Sharing-----
+    /**
+     * This function allowedOrigins adds Cross Origin Resource Sharing
+     * @param {} origin 
+     * If the origin callback does not meet one of the allowed origins
+     * @return  error message "The CORS policy for this application does not allow access from orgin"
+     * The callback must have the correct passport/ authentication in order to 
+     * @return data for api
+     */
     const cors = require('cors');
     let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234', 'https://stormy-taiga-55813.herokuapp.com/'];
     app.use(cors({
@@ -53,11 +59,24 @@ const { check, validationResult } = require('express-validator');
     
 
 //---------Returns Movies Home Page--------
+/**
+ * This endpoint returns users to the movies Home Page
+ * app.get uses / endpoint to request that the user is 
+ * @returns "Welcome to My Flix"
+ */
 app.get('/', (req, res) => {
     res.send('Welcome to My Flix');
 });
 
 //----Returns all movies----
+/**
+ * This endpoint takes users the the list of movies
+ * app.get uses /movies endpoint with the token authentication to request access to the list of movies
+ * if successful
+ * @return list of movies
+ * otherwise
+ * @return error message with the catch method
+ */
    // app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
        app.get('/movies', function (req, res) {
         Movies.find()
@@ -73,6 +92,16 @@ app.get('/', (req, res) => {
     });
 
 //-----Returns movies by Title-----
+/**
+ * This Function returns movies by Title
+ * app.get endpoint uses /movies/:Title along with token authentication to access movie titles
+ * @param {} title
+ * user will be able to find a movie based on the title name
+ * @return movie
+ * If there is an error with authentication the catch 
+ * @param {} err
+ * @return error status
+ */
     app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
         Movies.findOne({ Title: req.params.Title })
           .then((movie) => {
@@ -85,6 +114,14 @@ app.get('/', (req, res) => {
     });
 
 //------Returns a list of all movie directors----
+/**
+ * Returns a list of all movie directors
+ * app.get uses /directors endpoint and token to authenticate users request
+ * @param {} Movies
+ * @returns movie directors
+ * If there is an error in authentication
+ * @returns error with the catch method
+ */
     app.get('/directors', passport.authenticate('jwt', { session: false }), (req, res) => {
         Movies.find()
         .then( movies => {
@@ -98,6 +135,14 @@ app.get('/', (req, res) => {
   });
     
 //-------Returns a list of all genres------
+/**
+ * Returns a list of all movie genres
+ * app.get uses /genres endpoint and token to authenticate users request
+ * @param {} Movies
+ * @returns movie genres
+ * If there is an error in authentication
+ * @returns error with the catch method
+ */
     app.get('/genres', passport.authenticate('jwt', { session: false }), (req, res) => {
         Movies.find()
         .then( movies => {
@@ -111,6 +156,14 @@ app.get('/', (req, res) => {
   });
     
 //--------Returns a movie by genre------
+/**
+ * Returns a list of genre for a movie chosen by the user
+ * app.get uses /movies/genre/:name endpoint and token to authenticate users request
+ * @param {} Genre.Name
+ * @returns movie genre
+ * If there is an error in authentication
+ * @returns error with the catch method
+ */
     app.get('/movies/genre/:name', passport.authenticate('jwt', { session: false }), (req, res) => {
        Movie.find({"Genre.Name": req.params.name})
        .then( movies => {
@@ -125,6 +178,14 @@ app.get('/', (req, res) => {
     //--------User requests--------
 
     //------Show User List------
+    /**
+     * This function shows user list
+     * app.get uses the /users endpoint and token to authenticate the user 
+     * @param {} users
+     * @returns user
+     * If authenticate fails, catch 
+     * @returns error
+     */
     app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
         Users.find()
             .then(function (users) {
@@ -137,6 +198,17 @@ app.get('/', (req, res) => {
     });
 
     //------Adding a new User  with validation-----
+    /**
+     * Signning up a new User with validation
+     * use app.post to add a new user to the /users endpoint
+     * Users will be required to provide a username with a minumin of 5 characters, password and email address
+     * If there are errors in the validation procress 
+     * @returns error
+     * If user picks a username or password that is in use 
+     * @returns "already exists"
+     * Otherwise function will 
+     * @return new created username, password, email and birthdate
+     */
     app.post('/users',
       [
           check('Username', 'Username is required').isLength({min: 5}),
@@ -179,6 +251,15 @@ app.get('/', (req, res) => {
 
 
     //-----Updating a users information if user updates one they have to update all----
+    /**
+     * Updating a users information
+     * app.put uses /user/:id endpoint with authentication to access users profile
+     * @param {} user
+     * @returs user information
+     * User can then update information for their profile
+     * If there is an error
+     * @return error message
+     */
     app.put('/users/:id', passport.authenticate('jwt', { session: false }),
     [
         check('Username', 'Username is required').isLength({min: 5}),
@@ -219,6 +300,13 @@ app.get('/', (req, res) => {
 
 
 //--------Delete an existing user-----
+/**
+ * Delete an existing user
+ * app.delete uses /users/:id and token authenticate to first pull up a user profile to be removed
+ * @param {} user
+ * @return "does not exist" if there is an error
+ * otherwise the user is able to fine ones profile and delete it
+ */
     app.delete('/users/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
         Users.findOne({_id: req.params.id })
         .then((user) => {
@@ -238,6 +326,14 @@ app.get('/', (req, res) => {
     });
 
     //------Add Movies to Users favorites-----
+    /**
+     * Add Movies to Favorites
+     * app.post uses users/:id/movies/:Title endpoint along with token authentication
+     * @param {} id
+     * @return favorite movies pushed to users account
+     * If there is an error
+     * @return error
+     */
     app.post('/users/:id/movies/:Title',  passport.authenticate('jwt', { session: false }), (req, res) => {
         Users
         .findOneAndUpdate({_id: req.params.id }, {
@@ -255,6 +351,14 @@ app.get('/', (req, res) => {
     });
 
     //------Delete Movies from Users Favorites-----
+      /**
+     * Delete Movies from Favorites
+     * app.post uses users/:id/movies/:Title endpoint along with token authentication
+     * @param {} id
+     * @return favorite movies removed from users account
+     * If there is an error
+     * @return error
+     */
     app.delete('/users/:id/movies/:Title',  passport.authenticate('jwt', { session: false }), (req, res) => {
         Users.findOneAndUpdate({_id: req.params.id }, {
           $pull: { FavoriteMovies: req.params.Title}
@@ -271,7 +375,10 @@ app.get('/', (req, res) => {
     });
    
     
-
+    /**
+     * This is a function that shows if something is not working
+     * @return "Something broke!"
+     */
     
 
     app.use((err, req, res, next) => {

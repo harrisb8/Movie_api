@@ -1,9 +1,20 @@
+/**
+ * Defining a sceret key that must be used in order to identify users
+ */
+
 const jwtSecret ='your_jwt_secret';
 
 const jwt = require('jsonwebtoken'),
   passport = require('passport');
 
 require('./passport');
+
+/**
+ * This is a function to generateJWTToken
+ * @param {} user 
+ * @returns  username, and jwtsecret
+ * which will expire in seven days using an algorithm
+ */
 
 let generateJWTToken = (user) => {
     return jwt.sign(user, jwtSecret, {
@@ -13,6 +24,14 @@ let generateJWTToken = (user) => {
     });
 }
 
+/**
+ * This is a function that request user authentication
+ * @param {*} router 
+ * If there is something wrong with the information provided for login
+ * @returns message "Something is not right"
+ * If login in information is successful. The api will generate a JWTToken
+ * @returns user and token
+ */
 module.exports = (router) => {
     router.post('/login', (req, res) => {
         passport.authenticate('local', {session: false }, 
