@@ -41,7 +41,7 @@ let userSchema = mongoose.Schema({
 
 /**
  * @param {*} password 
- * @returns 
+ * @return password
  */
 userSchema.statics.hashPassword = (password) => {
     return bcrypt.hashSync(password, 10);
