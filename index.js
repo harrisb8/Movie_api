@@ -41,7 +41,7 @@ const { check, validationResult } = require('express-validator');
      * @return data for api
      */
     const cors = require('cors');
-    let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234', 'https://stormy-taiga-55813.herokuapp.com/'];
+    let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234', 'https://stormy-taiga-55813.herokuapp.com/', 'https://harrisb8.github.io/myFlix-Angular-client/welcome'];
     app.use(cors({
         origin: (origin, callback) => {
             if(!origin) return callback(null, true);
