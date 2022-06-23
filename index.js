@@ -174,6 +174,17 @@ app.get('/', (req, res) => {
            res.status(500).send("Error: " + err);
        });
     });
+
+    app.get('/movies/director/:name', passport.authenticate('jwt', { session: false }), (req, res) => {
+        Movie.find({"Director.Name": req.params.name})
+        .then( movies => {
+            res.status(201).json(movies)
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send("Error: " + err);
+        });
+     });
   
     //--------User requests--------
 
@@ -335,19 +346,27 @@ app.get('/', (req, res) => {
      * @return error
      */
     app.post('/users/:id/movies/:Title',  passport.authenticate('jwt', { session: false }), (req, res) => {
-        Users
-        .findOneAndUpdate({_id: req.params.id }, {
-          $push: { FavoriteMovies: req.params.Title}
-        },
-        { new: true }, // update is returned  
-         (err, user) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Error: ' + err);
-            } else {
-                res.json(user);
-            }
-        });
+        // find the movie by title
+        Movies.findOne({ Title: req.params.Title })
+        .then((movie) => {
+           Users
+           .findOneAndUpdate({_id: req.params.id }, {
+               // push that movie._id variable here
+               //  $push: { FavoriteMovies: movie._id}
+             $push: { FavoriteMovies: movie._id }
+           },
+           { new: true }, // update is returned  
+            (err, user) => {
+               if (err) {
+                   console.error(err);
+                   res.status(500).send('Error: ' + err);
+               } else {
+                   res.json(user);
+               }
+           });
+        })
+        // store that movie in some movie variable
+       
     });
 
     //------Delete Movies from Users Favorites-----
