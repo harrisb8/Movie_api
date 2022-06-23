@@ -379,18 +379,24 @@ app.get('/', (req, res) => {
      * @return error
      */
     app.delete('/users/:id/movies/:Title',  passport.authenticate('jwt', { session: false }), (req, res) => {
-        Users.findOneAndUpdate({_id: req.params.id }, {
-          $pull: { FavoriteMovies: req.params.Title}
-        },
-        { new: true}, // update is returned  
-         (err, user) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Error: ' + err);
-            }else {
-                res.json(user);
-            }
-        });
+        Movies.findOne({ Title: req.params.Title })
+        .then((movie) => {
+           Users
+           .findOneAndUpdate({_id: req.params.id }, {
+               // push that movie._id variable here
+               //  $push: { FavoriteMovies: movie._id}
+             $pull: { FavoriteMovies: movie._id }
+           },
+           { new: true }, // update is returned  
+            (err, user) => {
+               if (err) {
+                   console.error(err);
+                   res.status(500).send('Error: ' + err);
+               } else {
+                   res.json(user);
+               }
+           });
+        })
     });
    
     
