@@ -41,7 +41,7 @@ const { check, validationResult } = require('express-validator');
      * @return data for api
      */
     const cors = require('cors');
-    let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234', 'https://stormy-taiga-55813.herokuapp.com', 'https://harrisb8.github.io/myFlix-Angular-client', 'https://shimmering-profiterole-05f0c8.netlify.app', 'https://61f34c6074a49400bc883606--goofy-leakey-ed1a97.netlify.app'];
+    let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234', 'https://stormy-taiga-55813.herokuapp.com', 'https://harrisb8.github.io/myFlix-Angular-client', 'https://shimmering-profiterole-05f0c8.netlify.app', 'https://goofy-leakey-ed1a97.netlify.app'];
     app.use(cors({
         origin: (origin, callback) => {
             if(!origin) return callback(null, true);
