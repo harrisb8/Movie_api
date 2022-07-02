@@ -41,7 +41,7 @@ const { check, validationResult } = require('express-validator');
      * @return data for api
      */
     const cors = require('cors');
-    let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234', 'https://stormy-taiga-55813.herokuapp.com', 'https://harrisb8.github.io/myFlix-Angular-client', 'https://shimmering-profiterole-05f0c8.netlify.app'];
+    let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234', 'https://stormy-taiga-55813.herokuapp.com', 'https://harrisb8.github.io/myFlix-Angular-client', 'https://shimmering-profiterole-05f0c8.netlify.app', 'https://61f34c6074a49400bc883606--goofy-leakey-ed1a97.netlify.app'];
     app.use(cors({
         origin: (origin, callback) => {
             if(!origin) return callback(null, true);
@@ -381,6 +381,7 @@ app.get('/', (req, res) => {
     app.delete('/users/:id/movies/:Title',  passport.authenticate('jwt', { session: false }), (req, res) => {
         Movies.findOne({ Title: req.params.Title })
         .then((movie) => {
+           // console.log(movie)
            Users
            .findOneAndUpdate({_id: req.params.id }, {
                // push that movie._id variable here
@@ -389,6 +390,7 @@ app.get('/', (req, res) => {
            },
            { new: true }, // update is returned  
             (err, user) => {
+                console.log(user)
                if (err) {
                    console.error(err);
                    res.status(500).send('Error: ' + err);
